@@ -1,0 +1,38 @@
+#include <elapsedMillis.h>
+
+int LED = 12;
+int BUTTON = 4;
+boolean distr = false;
+unsigned int distr_time = 5000;
+elapsedMillis timeElapsed = 0;
+
+void setup_erogator()
+{
+	pinMode(LED,OUTPUT);
+	pinMode(BUTTON,INPUT);
+
+}
+
+
+void loop_erogator()
+{
+  if (distr == false ) {
+    timeElapsed=0;
+  }
+  delay(150);
+
+  if (digitalRead(BUTTON) == HIGH && distr == false){
+    distr = true;
+    digitalWrite(LED,HIGH);    
+  }
+  else if (digitalRead(BUTTON) == HIGH && distr == true){    
+    distr = false;
+    digitalWrite(LED,LOW);  
+  }	
+  
+   if (timeElapsed>=distr_time){
+    digitalWrite(LED,LOW);
+    distr = false;
+  }
+
+}

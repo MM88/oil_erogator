@@ -1,0 +1,95 @@
+#include <Adafruit_NFCShield_I2C.h>
+
+/**************************************************************************/
+/*! 
+    @file     readMifare.pde
+    @author   Adafruit Industries
+    @license  BSD (see license.txt)
+
+    This example will wait for any ISO14443A card or tag, and
+    depending on the size of the UID will attempt to read from it.
+   
+    If the card has a 4-byte UID it is probably a Mifare
+    Classic card, and the following steps are taken:
+   
+    - Authenticate block 4 (the first block of Sector 1) using
+      the default KEYA of 0XFF 0XFF 0XFF 0XFF 0XFF 0XFF
+    - If authentication succeeds, we can then read any of the
+      4 blocks in that sector (though only block 4 is read here)
+   
+    If the card has a 7-byte UID it is probably a Mifare
+    Ultralight card, and the 4 byte pages can be read directly.
+    Page 4 is read by default since this is the first 'general-
+    purpose' page on the tags.
+
+
+    This is an example sketch for the Adafruit PN532 NFC/RFID breakout boards
+    This library works with the Adafruit NFC breakout 
+      ----> https://www.adafruit.com/products/364
+ 
+    Check out the links above for our tutorials and wiring diagrams 
+    These chips use I2C to communicate
+
+    Adafruit invests time and resources providing this open source code, 
+    please support Adafruit and open-source hardware by purchasing 
+    products from Adafruit!
+    Description:
+ *   ARDUINO SHIELD NFC PN532 I2C
+ *
+ *   Ejemplo de uso de la shield NFC con chip PN532.
+ *   Enciende o apaga un LED conectado al pin "LED" cada vez que se lee la tarjeta
+ *   indicada en la constante "ID_TARJETA"
+ *
+ *   Nota: No puede usarse el led del Arduino ya que ese pin se usa para la Shield.
+*/
+/**************************************************************************/
+#include <Wire.h>
+#include <Adafruit_NFCShield_I2C.h>
+
+#define IRQ   (2)
+#define RESET (3)  // Not connected by default on the NFC Shield
+
+#define LED         8
+#define ID_TARJETA  1365872655
+
+Adafruit_NFCShield_I2C nfc(IRQ, RESET);
+
+void setup_NFC() {
+  Serial.begin(9600);
+  Serial.println("Initialization....");
+  nfc.begin();
+  nfc.SAMConfig();
+  pinMode(LED, OUTPUT);
+  Serial.println("Ready to read tag!");
+
+}
+
+
+boolean isAbilitated() {
+  uint8_t uidLength;                        // Length of the UID (4 or 7 bytes depending on ISO14443A card type)
+  uint8_t uid[] = { 0, 0, 0, 0, 0, 0, 0 };  // Buffer to store the returned UID
+  boolean success = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, uid, &uidLength);
+
+  if (success > 0) {
+     
+      uint32_t  cid = 0;
+	for( uint8_t i=0 ; i< uidLength ; i++ )
+	{
+		cid <<= 8;
+		cid |= uid[i];
+	}
+      Serial.print("  cid : ");Serial.println(cid, DEC);
+
+      if(cid==ID_TARJETA) {
+        Serial.println("TARGA OK!!!!");
+        //      digitalWrite( LED , !digitalRead(LED) ); // Si el led esta encendido lo apaga, si esta apagado lo enciende.
+//      delay(1000);
+      }
+      else 
+        Serial.println("TARGA NON ABILITATA!!!!");
+
+    }
+    
+    
+}
+

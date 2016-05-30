@@ -5,18 +5,19 @@
 #define out2 6
 #define inp2 10
 
-boolean debug = false;
+
+
+boolean debug = true;
 boolean abilitated = false;
-unsigned int  min_qta = 2000;           
+unsigned int  min_qta = 20;           
 unsigned int quantity;
 boolean distr = false;
-uint8_t productor[16];
+uint8_t productor[8];
 uint8_t data[16];
 uint8_t oil_quantity[16];
 int residue_oil;
 boolean oil_finished = false;
 boolean first_access = true; 
-//boolean abilitated = false;
 int celsius;
 
 
@@ -54,7 +55,7 @@ void setup() {
  
 void loop() {
 
- // set_oil_level(10000);
+  //set_oil_level(10000);
   
   
   abilitated =  isAbilitated();   

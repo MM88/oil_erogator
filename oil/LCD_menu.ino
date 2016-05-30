@@ -39,7 +39,8 @@ void setup_LCD_menu()
 
 void loop_LCD_menu(boolean abilitated)
 {
-    if (abilitated && distr == false && oil_finished == false ){
+    if (abilitated && distr == false ){
+    //** if (abilitated && distr == false && oil_finished == false ){
        if (timeElapsed >= page_time && page != 0x01 ){  
         timeElapsed=0;      
         disp.clear();                         
@@ -86,7 +87,7 @@ int changeMenu()
     disp.clear();                                    
     page++;
     timeElapsed=0;                                           
-    if (page > 0x04) page = 0x01;         
+    if (page > 0x05) page = 0x01;         
   } 
   return page;
 } 
@@ -110,7 +111,12 @@ void dispMenu(int page){
     case 0x04:                                       
       erogation();
        
-      break;                 
+      break;       
+    
+    case 0x05:                                       
+      set_oil();
+       
+      break;               
   } 
 } 
 
@@ -150,6 +156,24 @@ void oil_productor() {
   //PrintHexChar(productor,16);                            
         
 } 
+void set_oil(){
+  
+  disp.setCursor(0, 0);                               
+  disp.print("ricarica olio"); 
+  
+  if(!digitalRead(butOk))    t_butOk    = 0x01;
+
+  if(digitalRead(butOk) && t_butOk)                     
+   {   
+                
+      t_butOk = 0x00;                    
+      set_oil_level(1000);   
+      disp.clear(); 
+      page = 0x01;  
+      subpage =  0x00;  
+   } 
+    
+}
 void erogation()                                           
 {
 
@@ -175,15 +199,15 @@ void erogation()
           case 0x01:    
                              
                 disp.setCursor(0,1);                    
-                disp.print("op 1"); 
-                quantity = 5000;                                                         
+                disp.print("op 1: 20 "); 
+                quantity = 50;                                                         
                       
                 break;                                  
           case 0x02:        
                                            
                 disp.setCursor(0,1);                   
-                disp.print("op 2");   
-                quantity = 7000;                
+                disp.print("op 2: 50 ");   
+                quantity = 70;                
                               
                 break;   
                                        
